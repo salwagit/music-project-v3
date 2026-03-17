@@ -1,1 +1,0 @@
-# TODO pour Music Project v3&#10;&#10;## Étapes du plan approuvé:&#10;1. [x] Confirmer plan et créer TODO.md (fait)&#10;2. [x] Créer/éditer music-project/README.md (fait)&#10;3. [ ] git add & commit README&#10;4. [ ] git push origin main&#10;5. [ ] Vérifier repo GitHub / Fermer TODO&#10;&#10;Progression tracked ici.
