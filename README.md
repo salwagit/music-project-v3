@@ -1,1 +1,180 @@
-# Music Project v3 - Top Songs App&#10;&#10;[![Docker Compose](https://img.shields.io/badge/Docker-Compose-green.svg)](https://docs.docker.com/compose/) [![MongoDB](https://img.shields.io/badge/MongoDB-6-orange.svg)](https://www.mongodb.com/) [![Node.js](https://img.shields.io/badge/Node.js-18-blue.svg)](https://nodejs.org/)&#10;&#10;## 📖 Description&#10;&#10;Application web Node.js pour afficher les **Top Songs**, conteneurisée avec **Docker Compose**. Inclut MongoDB pour stockage et Mongo Express pour admin DB.&#10;&#10;- **App principale**: Serveur Express sur port 3000 (frontend HTML/CSS/JS).&#10;- **MongoDB**: DB sur port 27017 (volume persistant `mongo-data`).&#10;- **Mongo Express**: Interface web DB sur port 8081 (sans auth).&#10;&#10;## 🛠️ Prérequis&#10;&#10;- Docker & Docker Compose installés.&#10;- Git cloné: `git clone https://github.com/salwagit/music-project-v3.git`.&#10;&#10;## 🚀 Installation & Démarrage&#10;&#10;```bash&#10;cd music-project&#10;docker compose up -d  # Build & start&#10;docker compose logs -f  # Suivre logs&#10;```&#10;&#10;**Accès:**&#10;| Service        | URL/Port             |&#10;|----------------|----------------------|&#10;| App            | http://localhost:3000|&#10;| Mongo Express  | http://localhost:8081|&#10;| MongoDB        | localhost:27017     |&#10;&#10;## 🏗️ Architecture&#10;&#10;### Containers&#10;1. **top-songs-app** (build Dockerfile: Node 18, app.js).&#10;2. **mongodb** (mongo:6).&#10;3. **mongo-express**.&#10;&#10;### Réseau&#10;- **musicnet** (`music-project_musicnet`, bridge 172.18.0.0/16).&#10;- Communication: App → `mongodb://mongo:27017/musicdb`.&#10;&#10;### Dockerfile Highlights&#10;```dockerfile&#10;FROM node:18&#10;WORKDIR /app&#10;COPY package*.json ./&#10;RUN npm install&#10;COPY . .&#10;EXPOSE 3000&#10;CMD ["node", "app.js"]&#10;```&#10;&#10;## 🧪 Test&#10;&#10;- Ouvrir http://localhost:3000.&#10;- Ajouter données via http://localhost:8081.&#10;&#10;## 🛑 Stop/Reset&#10;&#10;```bash&#10;docker compose down     # Stop&#10;docker compose down -v  # + volumes&#10;docker system prune -f # Cleanup images&#10;```&#10;&#10;## 🔧 Troubleshooting&#10;&#10;- **Ports occupés?** Changez dans docker-compose.yml.&#10;- **Logs:** `docker compose logs app`.&#10;- **Rebuild:** `docker compose up --build -d`.&#10;- Warning version: Ignorez ou supprimez `version: "3.9"`.&#10;&#10;## 📁 Structure&#10;&#10;```&#10;music-project/&#10;├── app.js              # Serveur Express&#10;├── package.json        # Deps Node&#10;├── public/             # Frontend static&#10;│   ├── index.html&#10;│   └── style.css&#10;├── Dockerfile         # Build app&#10;└── docker-compose.yml # Orchestration&#10;```&#10;&#10;## 🤝 Contributing&#10;&#10;Fork → PR.&#10;&#10;**Auteur:** salwagit | **Repo:** [GitHub](https://github.com/salwagit/music-project-v3)
+# 🎵 Music Project v3 – Top Songs App
+## 📖 Description
+
+**Music Project v3** est une application web développée avec Node.js permettant d’afficher les **Top Songs** en récupérant les données depuis une API externe, puis en les stockant dans une base de données MongoDB.
+
+L’application est entièrement conteneurisée avec Docker Compose et comprend :
+
+* 🌐 **Application Web (Express.js)** : serveur backend + frontend statique
+* 💾 **MongoDB** : stockage des chansons
+* 🛠️ **Mongo Express** : interface d’administration de la base de données
+
+---
+
+## 🛠️ Prérequis
+
+Avant de commencer, assure-toi d’avoir installé :
+
+* Docker
+* Docker Compose
+* Git
+
+Cloner le projet :
+
+```bash
+git clone https://github.com/salwagit/music-project-v3.git
+cd music-project-v3
+```
+
+---
+
+## 🚀 Installation & Démarrage
+
+Lancer tous les services avec Docker :
+
+```bash
+docker compose up -d      # Build et démarrage
+docker compose logs -f   # Voir les logs en temps réel
+```
+
+---
+
+## 🌐 Accès aux services
+
+| Service       | URL                                            |
+| ------------- | ---------------------------------------------- |
+| Application   | [http://localhost:3000](http://localhost:3000) |
+| Mongo Express | [http://localhost:8081](http://localhost:8081) |
+| MongoDB       | localhost:27017                                |
+
+---
+
+## 🏗️ Architecture
+
+### 📦 Containers
+
+1. **top-songs-app**
+
+   * Application Node.js (Express)
+   * Exécute `app.js`
+
+2. **mongodb**
+
+   * Image officielle MongoDB (version 6)
+   * Données persistées via volume Docker
+
+3. **mongo-express**
+
+   * Interface web pour gérer MongoDB
+   * Accessible via navigateur
+
+---
+
+### 🌐 Réseau Docker
+
+* Réseau : `musicnet` (bridge)
+* Communication interne :
+
+```bash
+mongodb://mongo:27017/musicdb
+```
+
+---
+
+## 🐳 Dockerfile (Résumé)
+
+```dockerfile
+FROM node:18
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "app.js"]
+```
+
+---
+
+## 🧪 Tests
+
+1. Ouvrir l’application :
+
+   ```
+   http://localhost:3000
+   ```
+
+2. Vérifier les données via Mongo Express :
+
+   ```
+   http://localhost:8081
+   ```
+
+---
+
+## 🛑 Arrêt et nettoyage
+
+```bash
+docker compose down        # Arrêter les conteneurs
+docker compose down -v     # Supprimer aussi les volumes
+docker system prune -f     # Nettoyage global Docker
+```
+
+---
+
+## 🔧 Troubleshooting
+
+* ❌ **MongoDB non prêt**
+
+  * Attendre quelques secondes (retry automatique dans le code)
+
+* ❌ **Ports déjà utilisés**
+
+  * Modifier les ports dans `docker-compose.yml`
+
+* 🔍 **Voir les logs**
+
+  ```bash
+  docker compose logs app
+  ```
+
+* 🔄 **Rebuild complet**
+
+  ```bash
+  docker compose up --build -d
+  ```
+
+* ⚠️ **Warning version docker-compose**
+
+  * Supprimer `version: "3.9"` si nécessaire
+
+---
+
+## 📁 Structure du projet
+
+```
+music-project-v3/
+├── app.js                 # Serveur Express
+├── package.json           # Dépendances Node.js
+├── public/                # Frontend statique
+│   ├── index.html
+│   └── style.css
+├── Dockerfile             # Image de l'application
+└── docker-compose.yml     # Orchestration des services
+```
+
+---
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues !
+
+1. Fork le projet
+2. Crée une branche (`feature/ma-feature`)
+3. Commit tes changements
+4. Push et crée une Pull Request
+
