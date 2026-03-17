@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎵 Top 10 Music Charts</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🎵 Top 10 Music Charts</h1>
+    <p class="subtitle">Powered by Deezer API · MongoDB · Docker · Interface Moderne</p>
+  </header>
+
+  <main>
+    <div id="songs-container">
+      <div class="loading">Loading songs...</div>
+    </div>
+  </main>
+
+  <script>
+    async function loadSongs() {
+      try {
+        const res = await fetch("/api/songs");
+        const songs = await res.json();
+
+        const container = document.getElementById("songs-container");
+        container.innerHTML = "";
+
+        songs.forEach((song, index) => {
+          const duration = `${Math.floor(song.duration / 60)}:${String(song.duration % 60).padStart(2, "0")}`;
+
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="rank">#${index + 1}</div>
+            <img src="${song.cover}" alt="${song.title}" class="cover"/>
+            <div class="info">
+              <h2 class="title">${song.title}</h2>
+              <p class="artist">🎤 ${song.artist}</p>
+              <p class="album">💿 ${song.album}</p>
+              <p class="duration">⏱ ${duration}</p>
+              ${song.preview ? `<audio controls src="${song.preview}" class="preview"></audio>` : ""}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+      } catch (err) {
+        document.getElementById("songs-container").innerHTML =
+          `<p class="error">❌ Erreur : ${err.message}</p>`;
+      }
+    }
+
+    loadSongs();
+  </script>
+
+</body>
+</html>
